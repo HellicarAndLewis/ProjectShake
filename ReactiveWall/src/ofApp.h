@@ -16,6 +16,8 @@ public:
 	
 	void exit();
 	
+	ofColor rastafari(float x);
+
 	void update();
 	void updateVirtualKinect();
 	void updateDmx();

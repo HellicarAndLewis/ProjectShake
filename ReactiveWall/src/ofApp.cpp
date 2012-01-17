@@ -40,8 +40,8 @@ void ofApp::setupControlPanel() {
 	panel.addToggle("useAdapt", true);
 	panel.addSlider("adaptRate", .01, .0001, .05);
 	panel.addSlider("energyGrow", .1, 0, 1);
-	panel.addSlider("energyDecay", -.1, -1, 0);
-	panel.addSlider("energyMax", 20, 0, 100);
+	panel.addSlider("energyDecay", -.1, -.5, 0);
+	panel.addSlider("energyMax", 20, 0, 48);
 	
 	panel.addPanel("virtual camera");
 	float maxPosition = 4000;
@@ -64,9 +64,8 @@ void ofApp::setupControlPanel() {
 	panel.addPanel("lighting modules");
 	panel.addToggle("saveCurves", false);
 	panel.addToggle("loadCurves", false);
-	panel.addSlider("red", 1, 0, 1);
-	panel.addSlider("green", 1, 0, 1);
-	panel.addSlider("blue", 1, 0, 1);
+	panel.addSlider("saturation", 255, 0, 255);
+	panel.addSlider("brightness", 255, 0, 255);
 	for(int module = 1; module <= modules; module++) {
 		string label = "mod" + ofToString(module);
 		panel.addSlider(label, 0, 0, 1);
@@ -82,6 +81,10 @@ void ofApp::setupControlPanel() {
 void ofApp::exit() {
 	dmx.clear();
 	dmx.update(true); // black on shutdown
+}
+
+ofColor ofApp::rastafari(float x) {
+	return ofColor::fromHsb(x * 255. / 3., _("saturation"), _("brightness"));
 }
 
 void ofApp::update() {
@@ -101,7 +104,7 @@ void ofApp::updateVirtualKinect() {
 	kinect.setMaxLen(_("maxLen"));
 	kinect.setOrthoScale(_("orthoScale"));
 	kinect.setHorizontalFlip(_("horizontalFlip"));
-
+	
 	kinect.update();
 	if(kinect.isFrameNew()) {
 		absdiff(kinect, previous, diff);
@@ -118,10 +121,16 @@ void ofApp::updateVirtualKinect() {
 		accumulateWeighted(rawMean, runningMean, _("adaptRate"));
 		subtract(rawMean, runningMean, adaptedMean);
 		Mat& cur = _("useAdapt") ? adaptedMean : rawMean;
+		max(cur, 0, cur);
 		addWeighted(cur, _("energyGrow"), energy, 1, _("energyDecay"), energy);
 		min(max(energy, 0), _("energyMax"), energy);
 		resize(energy, moduleEnergy, cv::Size(1, modules), 0, 0, INTER_AREA);
 		moduleEnergy /= _("energyMax");
+		
+		for(int i = 0; i < moduleEnergy.rows; i++) {
+			int module = i + 1;
+			_("mod" + ofToString(module), moduleEnergy.at<float>(i));
+		}
 	}
 }
 
@@ -139,17 +148,16 @@ void ofApp::updateDmx() {
 		panel.setValueB("loadCurves", false);
 	}
 	
-	float red = _("red");
-	float green = _("green");
-	float blue = _("blue");
 	int channel = 1;
 	for(int module = 1; module <= modules; module++) {
-		int cur = 255 * _("mod" + ofToString(module));
-		dmx.setLevel(channel++, redCurve[cur * red]);
-		dmx.setLevel(channel++, greenCurve[cur * green]);
-		dmx.setLevel(channel++, blueCurve[cur * blue]);
+		ofColor cur = rastafari(_("mod" + ofToString(module)));
+		cout << module << ":" << cur << ", ";
+		dmx.setLevel(channel++, redCurve[cur.r]);
+		dmx.setLevel(channel++, greenCurve[cur.g]);
+		dmx.setLevel(channel++, blueCurve[cur.b]);
 		channel++;
 	}
+	cout << endl;
 	if(dmx.isConnected()) {
 		dmx.update();
 	} else {
@@ -168,13 +176,14 @@ void ofApp::drawVirtualKinect() {
 	diff.draw(0, 0);
 	ofEnableAlphaBlending();
 	ofDisableBlendMode();
-
+	
 	ofPushStyle();
 	ofSetLineWidth(3);
 	ofNoFill();
 	
 	ofPushMatrix();
-	ofScale(1, 10);
+	ofTranslate(0, kinect.getHeight());
+	ofScale(1, -10);
 	
 	ofSetColor(ofColor::white);
 	ofBeginShape();
@@ -217,11 +226,6 @@ void ofApp::drawVirtualKinect() {
 		drawHighlightString("adapt", 4, 64, ofColor::black, magentaPrint);
 	}
 	
-	for(int i = 0; i < moduleEnergy.rows; i++) {
-		int module = i + 1;
-		_("mod" + ofToString(module), moduleEnergy.at<float>(i));
-	}
-	
 	ofPopStyle();
 	ofPopMatrix();
 }
@@ -241,9 +245,7 @@ void ofApp::drawDmx() {
 		int gc = channel++;
 		int bc = channel++;
 		int ac = channel++;
-		int r = dmx.getLevel(rc);
-		int g = dmx.getLevel(gc);
-		int b = dmx.getLevel(bc);
+		int r = dmx.getLevel(rc), g = dmx.getLevel(gc), b = dmx.getLevel(bc);
 		ofSetColor(r, g, b);
 		ofFill();
 		ofRect(4, module * 16 + 6, 14, 14);
@@ -261,8 +263,27 @@ void ofApp::drawDmx() {
 }
 
 void ofApp::draw() {
-	ofBackground(127);
-	drawVirtualKinect();
-	drawDmx();
+	if(panel.hidden) {
+		ofPushMatrix();
+		float spacing = ofGetWidth() / modules;
+		int channel = 1;
+		for(int module = 1; module <= modules; module++) {
+			string label = "mod" + ofToString(module);
+			int rc = channel++;
+			int gc = channel++;
+			int bc = channel++;
+			int ac = channel++;
+			int r = dmx.getLevel(rc), g = dmx.getLevel(gc), b = dmx.getLevel(bc);
+			ofSetColor(r, g, b);
+			ofFill();
+			ofRect(0, 0, spacing, ofGetHeight());
+			ofTranslate(spacing, 0);
+		}
+		ofPopMatrix();
+	} else {
+		ofBackground(127);
+		drawVirtualKinect();
+		drawDmx();
+	}
 }
 
