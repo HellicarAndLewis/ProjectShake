@@ -1,0 +1,61 @@
+<sound>
+	<name>sounds/beep-1.wav</name>
+	<pulse>500</pulse>
+</sound>
+<sound>
+	<name>sounds/beep-2.wav</name>
+	<pulse>510</pulse>
+</sound>
+<sound>
+	<name>sounds/pop.wav</name>
+	<pulse>520</pulse>
+</sound>
+<sound>
+	<name>sounds/speak-and-spell-1.wav</name>
+	<pulse>4000</pulse>
+</sound>
+<sound>
+	<name>sounds/speak-and-spell-2.wav</name>
+	<pulse>12000</pulse>
+</sound>
+<sound>
+	<name>sounds/two-kicks-1.wav</name>
+	<pulse>3000</pulse>
+</sound>
+<sound>
+	<name>sounds/two-kicks-2.wav</name>
+	<pulse>3500</pulse>
+</sound>
+<sound>
+	<name>sounds/8-bit-chord.wav</name>
+	<loop>1</loop>
+	<tremolo>.02</tremolo>
+</sound>
+<sound>
+	<name>sounds/bad-morse-code.wav</name>
+	<loop>1</loop>
+	<pulse>100</pulse>
+	<tremolo>.1</tremolo>
+</sound>
+<sound>
+	<name>sounds/horn-ambient-vocoded.wav</name>
+	<loop>1</loop>
+	<pulse>150</pulse>
+</sound>
+<sound>
+	<name>sounds/rhodes-chords-1.wav</name>
+	<loop>1</loop>
+	<pulse>200</pulse>
+	<tremolo>.02</tremolo>
+</sound>
+<sound>
+	<name>sounds/rhodes-chords-2.wav</name>
+	<loop>1</loop>
+	<pulse>210</pulse>
+	<tremolo>.03</tremolo>
+</sound>
+<sound>
+	<name>sounds/speak-and-spell-noise.wav</name>
+	<loop>1</loop>
+	<pulse>200</pulse>
+</sound>

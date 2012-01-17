@@ -1,19 +1,32 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxXmlSettings.h"
 
 class Pulse : public ofSoundPlayer {
 public:
 	Pulse()
 	:pulse(0)
 	,name("")
-	,lastTrigger(0) {
+	,lastTrigger(0)
+	,seed((int) ofRandom(127))
+	,tremolo(0) {
 	}
-	void setPulse(unsigned long pulse) {
-		this->pulse = pulse;
-	}
-	void setName(string name) {
-		this->name = name;
+	void load(ofxXmlSettings xml) {
+		name = xml.getValue("name", "");
+		loadSound(name, false);
+		if(xml.getValue("loop", 0)) {
+			setLoop(true);
+			setMultiPlay(false);
+		} else {
+			setLoop(false);
+			setMultiPlay(true);
+		}
+		pulse = xml.getValue("pulse", 0);
+		tremolo = xml.getValue("tremolo", 0.0);
+		setPan(0);
+		play();
+		ofLogVerbose() << "Loaded sound " << name;
 	}
 	void update() {
 		if(pulse > 0) {
@@ -26,6 +39,10 @@ public:
 				}
 				lastTrigger = curTrigger;
 			}
+		}
+		setPan(ofSignedNoise(ofGetElapsedTimef() + seed));
+		if(tremolo > 0) {
+			setSpeed(1. + tremolo * ofSignedNoise(ofGetElapsedTimef() + seed));
 		}
 	}
 	void draw() {
@@ -55,15 +72,17 @@ public:
 private:
 	unsigned long pulse, lastTrigger;
 	string name;
+	int seed;
+	float tremolo;
 };
 
 class ofApp : public ofBaseApp {
 public:
 	void setup();
+	void loadSounds();
 	void update();
 	void draw();
 	void keyPressed(int key);
 	
-	vector<Pulse> loops, samples, textures;
-	vector<Pulse*> all;
+	vector<Pulse> sounds;
 };
