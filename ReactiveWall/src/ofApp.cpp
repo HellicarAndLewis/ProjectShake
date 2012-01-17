@@ -24,7 +24,8 @@ void ofApp::loadDmxSettings() {
 }
 
 void ofApp::setupControlPanel() {
-	panel.setup(280, 800);
+	panel.setup(256, 768);
+	panel.setPosition(0, 0);
 	panel.addPanel("virtual camera");
 	float maxPosition = 4000;
 	panel.addSlider("x", 0, -maxPosition, maxPosition);
@@ -127,17 +128,17 @@ void ofApp::updateDmx() {
 
 void ofApp::drawVirtualKinect() {
 	ofSetColor(255);
-	kinect.draw(768, 16);
+	kinect.draw(512, 0);
 }
 
 void ofApp::drawDmx() {
 	ofPushMatrix();
-	ofTranslate(256 + 8, 4);
+	ofTranslate(256, 0);
 	redCurve.draw(0, 0);
 	greenCurve.draw(0, 256);
 	blueCurve.draw(0, 512);
 	
-	ofTranslate(300, 0);
+	ofTranslate(256, 480);
 	int channel = 1;
 	for(int module = 1; module <= modules; module++) {
 		string label = "mod" + ofToString(module);
@@ -158,7 +159,7 @@ void ofApp::drawDmx() {
 		string gs = ofToString(gc) + ":" + ofToString(g);
 		string bs = ofToString(bc) + ":" + ofToString(b);
 		string text = label + " (" + rs + ", " + gs + ", " + bs + ")";
-		drawHighlightString(text, 24, module * 16 + 16);
+		drawHighlightString(text, 24, module * 16 + 2);
 	}
 	
 	ofPopMatrix();

@@ -21,7 +21,7 @@ public:
 	void updateDmx();
 	
 	void draw();
-	void drawVirtualKinect	();
+	void drawVirtualKinect();
 	void drawDmx();
 	
 	float _(string name);
