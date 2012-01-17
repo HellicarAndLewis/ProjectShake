@@ -24,10 +24,14 @@ public:
 	void drawVirtualKinect();
 	void drawDmx();
 	
-	float _(string name);
+	ofxAutoControlPanel panel;
+	float _(string name); // panel.getValueF() shortcut
 	
 	ofxVirtualKinect kinect;
-	ofxAutoControlPanel panel;
+	ofPixels previous;
+	ofImage diff;
+	cv::Mat mask;
+	cv::Mat columnMean;
 	
 	ofxCurvesTool redCurve, greenCurve, blueCurve;
 	ofxDmx dmx;

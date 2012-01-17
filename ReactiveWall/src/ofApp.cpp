@@ -4,8 +4,6 @@ using namespace cv;
 using namespace ofxCv;
 
 void ofApp::setup() {
-	kinect.setup();
-	
 	ofSetVerticalSync(true);
 	ofSetFrameRate(60);
 	
@@ -14,6 +12,10 @@ void ofApp::setup() {
 	
 	dmx.connect(port, modules * channelsPerModule);
 	dmx.update(true); // black on startup
+	
+	previous.allocate(kinect.getWidth(), kinect.getHeight(), OF_IMAGE_GRAYSCALE);
+	diff.allocate(kinect.getWidth(), kinect.getHeight(), OF_IMAGE_GRAYSCALE);
+	kinect.setup();
 }
 
 void ofApp::loadDmxSettings() {
@@ -91,6 +93,13 @@ void ofApp::updateVirtualKinect() {
 
 	kinect.update();
 	if(kinect.isFrameNew()) {
+		absdiff(kinect, previous, diff);
+		Mat kinectMat = toCv(kinect), previousMat = toCv(previous), diffMat = toCv(diff);
+		// only use pixels that have data both frames
+		diffMat &= (kinectMat > 0) & (previousMat > 0);
+		diff.update();
+		copy(kinect, previous);
+		columnMean = meanCols(toCv(diff));
 	}
 }
 
@@ -127,8 +136,29 @@ void ofApp::updateDmx() {
 }
 
 void ofApp::drawVirtualKinect() {
+	ofPushMatrix();
 	ofSetColor(255);
-	kinect.draw(512, 0);
+	ofTranslate(512, 0);
+	kinect.draw(0, 0);
+	
+	ofEnableBlendMode(OF_BLENDMODE_ADD);
+	ofSetColor(yellowPrint);
+	diff.draw(0, 0);
+	ofEnableAlphaBlending();
+	ofDisableBlendMode();
+
+	ofSetColor(magentaPrint);
+	ofPushStyle();
+	ofSetLineWidth(3);
+	ofNoFill();
+	ofBeginShape();
+	for(int i = 0; i < columnMean.rows; i++) {
+		int cur = columnMean.at<unsigned char>(i);
+		ofVertex(i, cur);
+	}
+	ofEndShape();
+	ofPopStyle();
+	ofPopMatrix();
 }
 
 void ofApp::drawDmx() {
@@ -167,7 +197,7 @@ void ofApp::drawDmx() {
 
 void ofApp::draw() {
 	ofBackground(127);
-	drawDmx();
 	drawVirtualKinect();
+	drawDmx();
 }
 
