@@ -12,6 +12,7 @@ void ofApp::_(string name, float x) {
 }
 
 void ofApp::setup() {
+	ofSetDataPathRoot("../../../../../SharedData/");
 	ofSetVerticalSync(true);
 	ofSetFrameRate(60);
 	

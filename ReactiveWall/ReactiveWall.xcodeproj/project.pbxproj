@@ -480,6 +480,7 @@
 		274BBCB714C50F81004CDA3B /* libsorder.make */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = libsorder.make; path = ../../../../../../../Users/kyle/Documents/openFrameworks/addons/ofxOpenCv/libs/opencv/lib/win_cb/libsorder.make; sourceTree = SOURCE_ROOT; };
 		274BBCB814C50F81004CDA3B /* libzlib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libzlib.a; path = ../../../../../../../Users/kyle/Documents/openFrameworks/addons/ofxOpenCv/libs/opencv/lib/win_cb/libzlib.a; sourceTree = SOURCE_ROOT; };
 		274BBF5214C55DA1004CDA3B /* ReactiveWall.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReactiveWall.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		27525FCB14C5AC1B0047B6A5 /* Pulse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pulse.h; sourceTree = "<group>"; };
 		27974FD5144D1A5A00BF8888 /* cameras.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cameras.c; path = ../../../addons/ofxKinect/libs/libfreenect/cameras.c; sourceTree = SOURCE_ROOT; };
 		27974FD6144D1A5A00BF8888 /* cameras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cameras.h; path = ../../../addons/ofxKinect/libs/libfreenect/cameras.h; sourceTree = SOURCE_ROOT; };
 		27974FD7144D1A5A00BF8888 /* core.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = core.c; path = ../../../addons/ofxKinect/libs/libfreenect/core.c; sourceTree = SOURCE_ROOT; };
@@ -1303,6 +1304,15 @@
 			path = ../../../../../../../Users/kyle/Documents/openFrameworks/addons/ofxOpenCv/libs/opencv/lib/win_cb;
 			sourceTree = SOURCE_ROOT;
 		};
+		27525FCA14C5AC1B0047B6A5 /* SharedCode */ = {
+			isa = PBXGroup;
+			children = (
+				27525FCB14C5AC1B0047B6A5 /* Pulse.h */,
+			);
+			name = SharedCode;
+			path = ../../../../../../../Users/kyle/Documents/openFrameworks/apps/ProjectShake/SharedCode;
+			sourceTree = SOURCE_ROOT;
+		};
 		30F2B5011415565D00597A7B /* ofxKinect */ = {
 			isa = PBXGroup;
 			children = (
@@ -1455,6 +1465,7 @@
 			children = (
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
 				E4EB6923138AFD0F00A09F29 /* Project.xcconfig */,
+				27525FCA14C5AC1B0047B6A5 /* SharedCode */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
 				E4EEC9E9138DF44700A80321 /* openFrameworks */,
 				BB4B014C10F69532006C3DED /* addons */,

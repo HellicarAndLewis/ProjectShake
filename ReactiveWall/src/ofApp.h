@@ -6,6 +6,7 @@
 #include "ofxDmx.h"
 #include "ofxCurvesTool.h"
 #include "ofxAutoControlPanel.h"
+#include "Pulse.h"
 
 class ofApp : public ofBaseApp {
 public:

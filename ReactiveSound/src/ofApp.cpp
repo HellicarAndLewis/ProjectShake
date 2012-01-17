@@ -1,6 +1,7 @@
 #include "ofApp.h"
 
 void ofApp::setup() {
+	ofSetDataPathRoot("../../../../../SharedData/");
 	ofSetVerticalSync(true);
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	loadSounds();
