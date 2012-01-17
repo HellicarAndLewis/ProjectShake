@@ -192,6 +192,7 @@ void ofApp::drawVirtualKinect() {
 	}
 	ofEndShape();
 	
+	ofSetColor(128);
 	ofLine(0, _("energyMax"), kinect.getWidth(), _("energyMax"));
 	
 	ofSetColor(yellowPrint);
