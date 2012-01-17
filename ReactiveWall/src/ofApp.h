@@ -26,12 +26,13 @@ public:
 	
 	ofxAutoControlPanel panel;
 	float _(string name); // panel.getValueF() shortcut
+	void _(string name, float x); // panel.setValueF() shortcut
 	
 	ofxVirtualKinect kinect;
 	ofPixels previous;
 	ofImage diff;
-	cv::Mat mask;
-	cv::Mat columnMean;
+	cv::Mat rawMean, runningMean, adaptedMean, energy;
+	cv::Mat moduleEnergy;
 	
 	ofxCurvesTool redCurve, greenCurve, blueCurve;
 	ofxDmx dmx;
