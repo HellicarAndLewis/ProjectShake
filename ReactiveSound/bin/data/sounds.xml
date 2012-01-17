@@ -3,6 +3,10 @@
 	<pulse>2000</pulse>
 </sound>
 <sound>
+	<name>sounds/two-kicks-1.wav</name>
+	<pulse>6000</pulse>
+</sound>
+<sound>
 	<name>sounds/speak-and-spell-2.wav</name>
 	<pulse>60000</pulse>
 </sound>
@@ -23,10 +27,6 @@
 <sound>
 	<name>sounds/speak-and-spell-1.wav</name>
 	<pulse>14000</pulse>
-</sound>
-<sound>
-	<name>sounds/two-kicks-1.wav</name>
-	<pulse>6000</pulse>
 </sound>
 <sound>
 	<name>sounds/speak-and-spell-noise.wav</name>

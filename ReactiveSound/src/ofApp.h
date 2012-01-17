@@ -10,7 +10,8 @@ public:
 	,name("")
 	,lastTrigger(0)
 	,seed((int) ofRandom(127))
-	,tremolo(0) {
+	,tremolo(0)
+	,pulseSpeed(1) {
 	}
 	void load(ofxXmlSettings xml) {
 		name = xml.getValue("name", "");
@@ -28,10 +29,14 @@ public:
 		play();
 		ofLogVerbose() << "Loaded sound " << name;
 	}
+	void setPulseSpeed(float pulseSpeed) {
+		this->pulseSpeed = pulseSpeed;
+	}
 	void update() {
 		if(pulse > 0) {
 			unsigned long curTrigger = ofGetSystemTime();
-			if(curTrigger - lastTrigger > pulse) {
+			unsigned long curPulse = pulseSpeed * pulse;
+			if(curTrigger - lastTrigger > curPulse) {
 				if(getIsPlaying()) { // loops
 					setPosition(ofRandom(0, 1));
 				} else { // sample
@@ -58,15 +63,16 @@ public:
 		ofRect(0, 0, width, height);
 		ofSetColor(255);
 		ofFill();
-		ofRect(playPosition, 0, 3, height);
+		ofRect(playPosition, 0, 3, 3);
 		ofSetColor(ofColor::red);
-		ofRect(pulsePosition, 0, 3, height);
+		ofRect(pulsePosition, 0, 3, 3);
 		ofSetColor(255);
 		ofDrawBitmapString(name, 4, 12);
 	}
 	float getPulsePosition() {
 		unsigned long curTrigger = ofGetSystemTime();
-		return (float) (curTrigger - lastTrigger) / pulse;
+		unsigned long curPulse = pulseSpeed * pulse;
+		return (float) (curTrigger - lastTrigger) / curPulse;
 	}
 	
 private:
@@ -74,6 +80,7 @@ private:
 	string name;
 	int seed;
 	float tremolo;
+	float pulseSpeed;
 };
 
 class ofApp : public ofBaseApp {
