@@ -25,6 +25,22 @@ void ofApp::setup() {
 	previous.allocate(kinect.getWidth(), kinect.getHeight(), OF_IMAGE_GRAYSCALE);
 	diff.allocate(kinect.getWidth(), kinect.getHeight(), OF_IMAGE_GRAYSCALE);
 	kinect.setup();
+	
+	loadSounds();
+}
+
+void ofApp::loadSounds() {
+	sounds.clear();
+	ofxXmlSettings xml;
+	xml.loadFile("sounds.xml");
+	int n = xml.getNumTags("sound");
+	for(int i = 0; i < n; i++) {
+		Pulse cur;
+		xml.pushTag("sound", i);
+		cur.load(xml);
+		xml.popTag();
+		sounds.push_back(cur);
+	}
 }
 
 void ofApp::loadDmxSettings() {
@@ -37,12 +53,15 @@ void ofApp::loadDmxSettings() {
 void ofApp::setupControlPanel() {
 	panel.setup(256, 768);
 	panel.setPosition(0, 0);
-	panel.addPanel("movement");
+	panel.addPanel("sound and movement");
 	panel.addToggle("useAdapt", true);
 	panel.addSlider("adaptRate", .01, .0001, .05);
 	panel.addSlider("energyGrow", .1, 0, 1);
 	panel.addSlider("energyDecay", -.1, -.5, 0);
 	panel.addSlider("energyMax", 20, 0, 48);
+	panel.addSlider("overallEnergy", 0, 0, 1);
+	panel.addSlider("minimumPresence", -.8, -2, 0);
+	panel.addSlider("pulseRange", .6, 0, 1);
 	
 	panel.addPanel("virtual camera");
 	float maxPosition = 4000;
@@ -70,7 +89,7 @@ void ofApp::setupControlPanel() {
 	for(int module = 1; module <= modules; module++) {
 		string label = "mod" + ofToString(module);
 		panel.addSlider(label, 0, 0, 1);
-	}
+	}	
 	panel.loadSettings("settings.xml");
 	
 	redCurve.setup(256);
@@ -91,6 +110,7 @@ ofColor ofApp::rastafari(float x) {
 void ofApp::update() {
 	updateVirtualKinect();
 	updateDmx();
+	updateSounds();
 }
 
 void ofApp::updateVirtualKinect() {
@@ -152,7 +172,6 @@ void ofApp::updateDmx() {
 	int channel = 1;
 	for(int module = 1; module <= modules; module++) {
 		ofColor cur = rastafari(_("mod" + ofToString(module)));
-		cout << module << ":" << cur << ", ";
 		dmx.setLevel(channel++, redCurve[cur.r]);
 		dmx.setLevel(channel++, greenCurve[cur.g]);
 		dmx.setLevel(channel++, blueCurve[cur.b]);
@@ -163,6 +182,17 @@ void ofApp::updateDmx() {
 		dmx.update();
 	} else {
 		panel.msg = "Could not connect to port " + port;
+	}
+}
+
+void ofApp::updateSounds() {
+	float endVolume = ofMap(_("overallEnergy"), 0, 1, _("minimumPresence"), 1, true);
+	float pulseSpeed = ofMap(_("overallEnergy"), 0, 1, 1 + _("pulseRange"), 1 - _("pulseRange"), true);
+	for(int i = 0; i < sounds.size(); i++) {
+		float curVolume = ofMap(i, 0, sounds.size() - 1, 1, endVolume);
+		sounds[i].setVolume(MAX(curVolume, 0));
+		sounds[i].setPulseSpeed(pulseSpeed);
+		sounds[i].update();
 	}
 }
 
@@ -250,17 +280,27 @@ void ofApp::drawDmx() {
 		int r = dmx.getLevel(rc), g = dmx.getLevel(gc), b = dmx.getLevel(bc);
 		ofSetColor(r, g, b);
 		ofFill();
-		ofRect(4, module * 16 + 6, 14, 14);
+		ofRect(4, module * 16, 14, 14);
 		ofSetColor(255);
 		ofNoFill();
-		ofRect(4, module * 16 + 6, 14, 14);
+		ofRect(4, module * 16, 14, 14);
 		string rs = ofToString(rc) + ":" + ofToString(r);
 		string gs = ofToString(gc) + ":" + ofToString(g);
 		string bs = ofToString(bc) + ":" + ofToString(b);
 		string text = label + " (" + rs + ", " + gs + ", " + bs + ")";
-		drawHighlightString(text, 24, module * 16 + 2);
+		drawHighlightString(text, 24, module * 16 - 2);
 	}
 	
+	ofPopMatrix();
+}
+
+void ofApp::drawSounds() {
+	ofPushMatrix();
+	ofTranslate(800, 480 + 16);
+	for(int i = 0; i < sounds.size(); i++) {
+		sounds[i].draw();
+		ofTranslate(0, 20);
+	}
 	ofPopMatrix();
 }
 
@@ -286,6 +326,7 @@ void ofApp::draw() {
 		ofBackground(127);
 		drawVirtualKinect();
 		drawDmx();
+		drawSounds();
 	}
 }
 

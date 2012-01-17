@@ -14,6 +14,7 @@ public:
 	void setup();
 	void loadDmxSettings();
 	void setupControlPanel();
+	void loadSounds();
 	
 	void exit();
 	
@@ -22,10 +23,12 @@ public:
 	void update();
 	void updateVirtualKinect();
 	void updateDmx();
+	void updateSounds();
 	
 	void draw();
 	void drawVirtualKinect();
 	void drawDmx();
+	void drawSounds();
 	
 	ofxAutoControlPanel panel;
 	float _(string name); // panel.getValueF() shortcut
@@ -41,4 +44,6 @@ public:
 	ofxDmx dmx;
 	string port;
 	int modules, channelsPerModule;
+	
+	vector<Pulse> sounds;
 };
