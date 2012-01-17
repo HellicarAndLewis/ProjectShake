@@ -148,9 +148,12 @@ void ofApp::updateVirtualKinect() {
 		resize(energy, moduleEnergy, cv::Size(1, modules), 0, 0, INTER_AREA);
 		moduleEnergy /= _("energyMax");
 		
+		_("overallEnergy", 0);
 		for(int i = 0; i < moduleEnergy.rows; i++) {
 			int module = i + 1;
-			_("mod" + ofToString(module), moduleEnergy.at<float>(i));
+			float cur = moduleEnergy.at<float>(i);
+			_("mod" + ofToString(module), cur);
+			_("overallEnergy", MAX(_("overallEnergy"), cur));
 		}
 	}
 }
@@ -177,7 +180,6 @@ void ofApp::updateDmx() {
 		dmx.setLevel(channel++, blueCurve[cur.b]);
 		channel++;
 	}
-	cout << endl;
 	if(dmx.isConnected()) {
 		dmx.update();
 	} else {
@@ -269,7 +271,7 @@ void ofApp::drawDmx() {
 	greenCurve.draw(0, 256);
 	blueCurve.draw(0, 512);
 	
-	ofTranslate(256, 480);
+	ofTranslate(256 + 14, 480);
 	int channel = 1;
 	for(int module = 1; module <= modules; module++) {
 		string label = "mod" + ofToString(module);
